@@ -19,26 +19,36 @@
         #title {
             font-size: 3rem;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 0px #000, 4px 4px 0px #FFF; /* 3D effect */
+            text-shadow: 3px 3px #000; /* For 3D effect */
+            letter-spacing: 2px; /* Additional styling */
+            transform: perspective(500px) rotateX(20deg); /* For 3D effect */
         }
         #ageDisplay, #lifeExpectancyDisplay, #quoteDisplay {
             margin-top: 20px;
             font-size: 2rem;
-            text-shadow: 1px 1px 0px #000, 2px 2px 0px #FFF; /* 3D effect */
+            text-shadow: 2px 2px #000; /* For 3D effect */
         }
         input, button {
             padding: 10px;
             font-size: 1rem;
             color: #282c34;
             cursor: pointer;
-            border-radius: 15px; /* Bubbly effect */
-            border: none;
-            box-shadow: 0px 0px 10px #000; /* Add a subtle shadow */
-            outline: none; /* Remove the default outline */
+            border-radius: 15px; /* For Bubbly effect */
+            border: none; /* Removes default border */
+            box-shadow: 0px 4px #000; /* For 3D effect */
+            outline: none; /* Removes default outline */
+            transition: all 0.3s ease-in-out; /* For smooth transition effect */
         }
         button {
             background-color: #61dafb;
             color: #282c34;
+            &:hover {
+                transform: scale(1.1); /* For Bubbly effect */
+            }
+        }
+        input:hover, input:focus, button:hover, button:focus {
+            transform: scale(1.05); /* For Bubbly effect */
+            box-shadow: 0px 6px #000; /* For 3D effect */
         }
         .sparkle {
             position: absolute;
