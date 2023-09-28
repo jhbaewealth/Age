@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Age and Life Expectancy Calculator</title>
@@ -17,43 +16,40 @@
             color: #61dafb;
             font-family: 'Arial', sans-serif;
         }
-
         #title {
             font-size: 3rem;
             margin-bottom: 20px;
-            text-shadow: 3px 3px #000;
-            letter-spacing: 2px;
-            transform: perspective(500px) rotateX(20deg);
+            text-shadow: 3px 3px #000; /* For 3D effect */
+            letter-spacing: 2px; /* Additional styling */
+            transform: perspective(500px) rotateX(20deg); /* For 3D effect */
         }
-
         #ageDisplay, #lifeExpectancyDisplay, #quoteDisplay {
             margin-top: 20px;
             font-size: 2rem;
-            text-shadow: 2px 2px #000;
+            text-shadow: 2px 2px #000; /* For 3D effect */
         }
-
         input, button {
             padding: 10px;
             font-size: 1rem;
             color: #282c34;
             cursor: pointer;
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0px 4px #000;
-            outline: none;
-            transition: all 0.3s ease-in-out;
+            border-radius: 15px; /* For Bubbly effect */
+            border: none; /* Removes default border */
+            box-shadow: 0px 4px #000; /* For 3D effect */
+            outline: none; /* Removes default outline */
+            transition: all 0.3s ease-in-out; /* For smooth transition effect */
         }
-
         button {
             background-color: #61dafb;
             color: #282c34;
+            &:hover {
+                transform: scale(1.1); /* For Bubbly effect */
+            }
         }
-
-        button:hover, input:hover, input:focus, button:focus {
-            transform: scale(1.05);
-            box-shadow: 0px 6px #000;
+        input:hover, input:focus, button:hover, button:focus {
+            transform: scale(1.05); /* For Bubbly effect */
+            box-shadow: 0px 6px #000; /* For 3D effect */
         }
-
         .sparkle {
             position: absolute;
             background-color: #61dafb;
@@ -62,13 +58,11 @@
             border-radius: 50%;
             animation: scaleUp 0.5s forwards;
         }
-
         @keyframes scaleUp {
             to {
                 transform: scale(0);
             }
         }
-
         #footnote {
             position: fixed;
             bottom: 0;
@@ -79,14 +73,8 @@
             color: #61dafb;
             padding: 5px;
         }
-
-        /* Additional Styling for DonorBox */
-        #donorbox {
-            margin-top: 30px;
-        }
     </style>
 </head>
-
 <body>
     <div id="title"> ~ Enter Your Birth Date ~ </div>
     <form id="birthdayForm">
@@ -97,16 +85,9 @@
     <div id="lifeExpectancyDisplay"> </div>
     <div id="quoteDisplay"></div>
     <div id="footnote">* The average life expectancy used for calculations is 72.6 years</div>
-    
-    <!-- DonorBox Embed -->
-    <div id="donorBoxContainer">
-    <script src="https://donorbox.org/widget.js" paypalExpress="true"></script>
-    <iframe src="https://donorbox.org/embed/tier-1-10" name="donorbox" allowpaymentrequest allowfullscreen seamless="seamless" frameborder="0" scrolling="no" height="300px" width="300px" style="max-width: 300px; max-height: 300px; min-width: 250px;"></iframe>
-</div>
-    
     <script>
         let interval;
-        let lastQuoteIndex = -1;
+        let lastQuoteIndex = -1; 
         const averageLifeExpectancy = 72.6;
         const quotes = [
     "Man is the only creature who refuses to be what he is. — Albert Camus",
@@ -178,58 +159,60 @@
     "It is forbidden to kill; therefore all murderers are punished unless they kill in large numbers and to the sound of trumpets. — Voltaire",
 ];
 
-       document.getElementById('birthdayForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        submitBirthday();
-    });
-
-    function displayQuote() {
-        let randomIndex;
-        do {
-            randomIndex = Math.floor(Math.random() * quotes.length);
-        } while (randomIndex === lastQuoteIndex && quotes.length > 1);
-
-        lastQuoteIndex = randomIndex;
-        document.getElementById('quoteDisplay').textContent = quotes[randomIndex];
-    }
-
-    document.addEventListener('mousemove', function (e) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.style.top = e.pageY + 'px';
-        sparkle.style.left = e.pageX + 'px';
-        document.body.appendChild(sparkle);
-
-        sparkle.addEventListener('animationend', function () {
-            sparkle.parentElement.removeChild(sparkle);
+        document.getElementById('birthdayForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitBirthday();
         });
-    });
 
-    function calculateAge(birthDate) {
-        let now = new Date();
-        let birth = new Date(birthDate);
-        let differenceInSeconds = (now - birth) / 1000;
-        let years = differenceInSeconds / (365.25 * 24 * 3600);
-        return years;
-    }
-
-    function updateDisplays(birthDate) {
-        let age = calculateAge(birthDate);
-        document.getElementById('ageDisplay').textContent = 'Your Age: ' + age.toFixed(9) + ' years';
-
-        let ageInSeconds = (new Date() - new Date(birthDate)) / 1000;
-        let secondsLeft = (averageLifeExpectancy * 365.25 * 24 * 3600) - ageInSeconds;
-        document.getElementById('lifeExpectancyDisplay').textContent = 'Estimated Seconds Left to Live: ' + secondsLeft.toFixed(0);
-    }
-
-    function submitBirthday() {
-        clearInterval(interval);
-        let inputElement = document.getElementById('birthDateInput');
-        let birthDate = inputElement.value;
-        if (birthDate) {
-            updateDisplays(birthDate + 'T00:00:00');
-            interval = setInterval(() => updateDisplays(birthDate + 'T00:00:00'), 1000);
-            displayQuote(); 
+        function displayQuote() {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * quotes.length);
+            } while (randomIndex === lastQuoteIndex && quotes.length > 1);
+            
+            lastQuoteIndex = randomIndex;
+            document.getElementById('quoteDisplay').textContent = quotes[randomIndex];
         }
-    }
-</script>
+
+        document.addEventListener('mousemove', function(e) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.top = e.pageY + 'px';
+            sparkle.style.left = e.pageX + 'px';
+            document.body.appendChild(sparkle);
+
+            sparkle.addEventListener('animationend', function() {
+                sparkle.parentElement.removeChild(sparkle);
+            });
+        });
+
+        function calculateAge(birthDate) {
+            let now = new Date();
+            let birth = new Date(birthDate);
+            let differenceInSeconds = (now - birth) / 1000;
+            let years = differenceInSeconds / (365.25 * 24 * 3600);
+            return years;
+        }
+
+        function updateDisplays(birthDate) {
+            let age = calculateAge(birthDate);
+            document.getElementById('ageDisplay').textContent = 'Your Age: ' + age.toFixed(9) + ' years';
+
+            let ageInSeconds = (new Date() - new Date(birthDate)) / 1000;
+            let secondsLeft = (averageLifeExpectancy * 365.25 * 24 * 3600) - ageInSeconds;
+            document.getElementById('lifeExpectancyDisplay').textContent = 'Estimated Seconds Left to Live: ' + secondsLeft.toFixed(0);
+        }
+
+        function submitBirthday() {
+            clearInterval(interval);
+            let inputElement = document.getElementById('birthDateInput');
+            let birthDate = inputElement.value;
+            if (birthDate) {
+                updateDisplays(birthDate + 'T00:00:00');
+                interval = setInterval(() => updateDisplays(birthDate + 'T00:00:00'), 1000);
+                displayQuote(); // Call the displayQuote function when a new date is submitted
+            }
+        }
+    </script>
+</body>
+</html>
