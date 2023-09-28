@@ -2,11 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Added viewport meta tag -->
     <title>Age and Life Expectancy Calculator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/pikaday.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/css/pikaday.min.css">
     <style>
         body {
             margin: 0;
@@ -23,21 +20,49 @@
         #title {
             font-size: 3rem;
             margin-bottom: 20px;
-            text-shadow: 3px 3px #000;
+            text-shadow: 3px 3px #000; 
+            letter-spacing: 2px; 
+            transform: perspective(500px) rotateX(20deg); 
+        }
+        #ageDisplay, #lifeExpectancyDisplay, #quoteDisplay {
+            margin-top: 20px;
+            font-size: 2rem;
+            text-shadow: 2px 2px #000; 
         }
         input, button {
-            padding: 15px;
-            font-size: 1.5rem;
+            padding: 15px;  
+            font-size: 1.5rem;  
             color: #282c34;
             cursor: pointer;
             border-radius: 15px;
-            border: none;
+            border: none; 
+            box-shadow: 0px 4px #000; 
             outline: none;
             transition: all 0.3s ease-in-out;
         }
         button {
             background-color: #61dafb;
             color: #282c34;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+        input:hover, input:focus, button:hover, button:focus {
+            transform: scale(1.05); 
+            box-shadow: 0px 6px #000;
+        }
+        .sparkle {
+            position: absolute;
+            background-color: #61dafb;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: scaleUp 0.5s forwards;
+        }
+        @keyframes scaleUp {
+            to {
+                transform: scale(0);
+            }
         }
         #footnote {
             position: fixed;
@@ -54,23 +79,126 @@
 <body>
     <div id="title"> ~ Enter Your Birth Date ~ </div>
     <form id="birthdayForm">
-        <input type="text" id="birthDateInput" readonly />
+        <input type="date" id="birthDateInput" max="2023-09-26" />
         <button type="submit">Submit</button>
     </form>
+    <div id="ageDisplay"> </div>
+    <div id="lifeExpectancyDisplay"> </div>
+    <div id="quoteDisplay"></div>
     <div id="footnote">* The average life expectancy used for calculations is 72.6 years</div>
     <script>
         let interval;
+        let lastQuoteIndex = -1; 
         const averageLifeExpectancy = 72.6;
-        
+        const quotes = [
+    "Man is the only creature who refuses to be what he is. — Albert Camus",
+    "The eternal silence of these infinite spaces frightens me. — Blaise Pascal",
+    "The longer and more carefully we look at a funny story, the sadder it becomes. — Nikolai Gogol",
+    "Hell is—other people! — Jean-Paul Sartre",
+    "Man is condemned to be free; because once thrown into the world, he is responsible for everything he does. — Jean-Paul Sartre",
+    "High hopes were once formed of democracy; but democracy means simply the bludgeoning of the people by the people for the people. — Oscar Wilde",
+    "Life is pain, highness. Anyone who says differently is selling something. — William Goldman",
+    "Time flies over us, but leaves its shadow behind. — Nathaniel Hawthorne",
+    "The human race is a monotonous affair. Most people spend the greatest part of their time working in order to live, and what little freedom remains so fills them with fear that they seek out any and every means to be rid of it. — Johann Wolfgang von Goethe",
+    "One must still have chaos in oneself to be able to give birth to a dancing star. — Friedrich Nietzsche",
+    "The mass of men lead lives of quiet desperation. — Henry David Thoreau",
+    "Sometimes I can hear my bones straining under the weight of all the lives I'm not living. — Jonathan Safran Foer",
+    "When you look long into an abyss, the abyss looks long into you. — Friedrich Nietzsche",
+    "The universe is indifferent. — Don Draper",
+    "To realize the unimportance of time is the gate of wisdom. — Bertrand Russell",
+    "Life’s but a walking shadow, a poor player, that struts and frets his hour upon the stage, and then is heard no more. It is a tale told by an idiot, full of sound and fury, signifying nothing. — William Shakespeare",
+    "Many fears are born of fatigue and loneliness. — Max Ehrmann",
+    "Time takes it all, whether you want it to or not. — Stephen King",
+    "We can regard our life as a uselessly disturbing episode in the blissful repose of nothingness. — Arthur Schopenhauer",
+    "I don’t want to die without any scars. — Chuck Palahniuk",
+    "There is no greater sorrow than to recall happiness in times of misery. — Dante Alighieri",
+    "So it goes. — Kurt Vonnegut",
+    "I was never really insane except upon occasions when my heart was touched. — Edgar Allan Poe",
+    "Life is a long preparation for something that never happens. — W.B. Yeats",
+    "The world breaks everyone, and afterward, some are strong at the broken places. — Ernest Hemingway",
+    "You exist only in what you do. — Federico Fellini",
+    "Our greatest glory is not in never falling, but in rising every time we fall. — Confucius",
+    "We are each our own devil, and we make this world our hell. — Oscar Wilde",
+    "I can’t go on, I’ll go on. — Samuel Beckett",
+    "Pessimism leads to weakness, optimism to power. — William James",
+    "If there is a sin against life, it consists perhaps not so much in despairing of life as in hoping for another life and in eluding the implacable grandeur of this life. — Albert Camus",
+    "Life begins on the other side of despair. — Jean-Paul Sartre",
+    "Life can only be understood backwards; but it must be lived forwards. — Søren Kierkegaard",
+    "In the depth of winter, I finally learned that within me there lay an invincible summer. — Albert Camus",
+    "We are all born mad. Some remain so. — Samuel Beckett",
+    "One day, in retrospect, the years of struggle will strike you as the most beautiful. — Sigmund Freud",
+    "All human wisdom is summed up in two words; wait and hope. — Alexandre Dumas",
+    "Our life is made by the death of others. — Leonardo da Vinci",
+    "The trouble is, you think you have time. — Buddha",
+    "One lives in the hope of becoming a memory. — Antonio Porchia",
+    "Man is the only creature who refuses to be what he is. — Albert Camus",
+    "Life is a shipwreck, but we must not forget to sing in the lifeboats. — Voltaire",
+    "The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom. — Isaac Asimov",
+    "The greatest empire is to be emperor of oneself. — Seneca",
+    "A thinker sees his own actions as experiments and questions–as attempts to find out something. Success and failure are for him answers above all. — Friedrich Nietzsche",
+    "Freedom is the right to tell people what they do not want to hear. — George Orwell",
+    "Out of life's school of war: What does not destroy me, makes me stronger. — Friedrich Nietzsche",
+    "Is man merely a mistake of God's? Or God merely a mistake of man? — Friedrich Nietzsche",
+    "It is not death that a man should fear, but he should fear never beginning to live. — Marcus Aurelius",
+    "Man prefers to believe what he prefers to be true. — Francis Bacon",
+    "Most men would rather deny a hard truth than face it. — George R.R. Martin",
+    "What is wanted is not the will to believe, but the will to find out, which is the exact opposite. — Bertrand Russell",
+    "A man sees in the world what he carries in his heart. — Johann Wolfgang von Goethe",
+    "One is responsible to life: It is the small beacon in that terrifying darkness from which we come and to which we shall return. — James Baldwin",
+    "Man is the only being who knows he is alone. — Octavio Paz",
+    "The unexamined life is not worth living. — Socrates",
+    "The greatest hazard of all, losing one’s self, can occur very quietly in the world, as if it were nothing at all. — Søren Kierkegaard",
+    "Hell is empty and all the devils are here. — William Shakespeare",
+    "To study philosophy is nothing but to prepare one’s self to die. — Cicero",
+    "There is but one truly serious philosophical problem, and that is suicide. — Albert Camus",
+    "Since we cannot change reality, let us change the eyes which see reality. — Nikos Kazantzakis",
+    "Man is born free, and everywhere he is in chains. — Jean-Jacques Rousseau",
+    "One who makes himself a worm cannot complain afterwards if people step on him. — Immanuel Kant",
+    "People understand me so poorly that they don't even understand my complaint about them not understanding me. — Søren Kierkegaard",
+    "He who fights with monsters might take care lest he thereby become a monster. — Friedrich Nietzsche",
+    "Philosophy is at once the most sublime and the most trivial of human pursuits. — William James",
+    "It is forbidden to kill; therefore all murderers are punished unless they kill in large numbers and to the sound of trumpets. — Voltaire",
+];
+
         document.getElementById('birthdayForm').addEventListener('submit', function(e) {
             e.preventDefault();
             submitBirthday();
         });
-        
-        const picker = new Pikaday({
-            field: document.getElementById('birthDateInput'),
-            format: 'YYYY-MM-DD',
-            maxDate: moment('2023-09-26').toDate(),
+
+        function displayQuote() {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * quotes.length);
+            } while (randomIndex === lastQuoteIndex && quotes.length > 1);
+            
+            lastQuoteIndex = randomIndex;
+            document.getElementById('quoteDisplay').textContent = quotes[randomIndex];
+        }
+
+        document.addEventListener('mousemove', function(e) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.top = e.pageY + 'px';
+            sparkle.style.left = e.pageX + 'px';
+            document.body.appendChild(sparkle);
+
+            sparkle.addEventListener('animationend', function() {
+                sparkle.parentElement.removeChild(sparkle);
+            });
+        });
+
+        // Added touch event for mobile sparkle effect
+        document.addEventListener('touchmove', function(e) {
+            const touch = e.touches[0];
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.top = touch.pageY + 'px';
+            sparkle.style.left = touch.pageX + 'px';
+            document.body.appendChild(sparkle);
+
+            sparkle.addEventListener('animationend', function() {
+                sparkle.parentElement.removeChild(sparkle);
+            });
         });
 
         function calculateAge(birthDate) {
@@ -83,17 +211,21 @@
 
         function updateDisplays(birthDate) {
             let age = calculateAge(birthDate);
+            document.getElementById('ageDisplay').textContent = 'Your Age: ' + age.toFixed(9) + ' years';
+
             let ageInSeconds = (new Date() - new Date(birthDate)) / 1000;
             let secondsLeft = (averageLifeExpectancy * 365.25 * 24 * 3600) - ageInSeconds;
-            alert('Your Age: ' + age.toFixed(9) + ' years\nEstimated Seconds Left to Live: ' + secondsLeft.toFixed(0));
+            document.getElementById('lifeExpectancyDisplay').textContent = 'Estimated Seconds Left to Live: ' + secondsLeft.toFixed(0);
         }
 
         function submitBirthday() {
             clearInterval(interval);
-            let birthDate = picker.toString();
+            let inputElement = document.getElementById('birthDateInput');
+            let birthDate = inputElement.value;
             if (birthDate) {
                 updateDisplays(birthDate + 'T00:00:00');
                 interval = setInterval(() => updateDisplays(birthDate + 'T00:00:00'), 1000);
+                displayQuote();
             }
         }
     </script>
