@@ -213,12 +213,11 @@
                 interval = setInterval(() => updateDisplays(birthDate + 'T00:00:00'), 1000);
                 displayQuote(); // Call the displayQuote function when a new date is submitted
 
-                document.getElementById('quickSelect').addEventListener('click', function() {
+        document.getElementById('quickSelect').addEventListener('click', function() {
             let currentDate = new Date();
             let quickSelectDate = new Date(currentDate.setFullYear(currentDate.getFullYear() - 25)).toISOString().split('T')[0];
             document.getElementById('birthDateInput').value = quickSelectDate;
-            }
-        }
+        });
     </script>
 </body>
 </html>
