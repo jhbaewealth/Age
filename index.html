@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- Added viewport meta tag -->
     <title>Age and Life Expectancy Calculator</title>
     <style>
         body {
@@ -19,36 +20,36 @@
         #title {
             font-size: 3rem;
             margin-bottom: 20px;
-            text-shadow: 3px 3px #000; /* For 3D effect */
-            letter-spacing: 2px; /* Additional styling */
-            transform: perspective(500px) rotateX(20deg); /* For 3D effect */
+            text-shadow: 3px 3px #000; 
+            letter-spacing: 2px; 
+            transform: perspective(500px) rotateX(20deg); 
         }
         #ageDisplay, #lifeExpectancyDisplay, #quoteDisplay {
             margin-top: 20px;
             font-size: 2rem;
-            text-shadow: 2px 2px #000; /* For 3D effect */
+            text-shadow: 2px 2px #000; 
         }
         input, button {
-            padding: 10px;
-            font-size: 1rem;
+            padding: 15px;  
+            font-size: 1.5rem;  
             color: #282c34;
             cursor: pointer;
-            border-radius: 15px; /* For Bubbly effect */
-            border: none; /* Removes default border */
-            box-shadow: 0px 4px #000; /* For 3D effect */
-            outline: none; /* Removes default outline */
-            transition: all 0.3s ease-in-out; /* For smooth transition effect */
+            border-radius: 15px;
+            border: none; 
+            box-shadow: 0px 4px #000; 
+            outline: none;
+            transition: all 0.3s ease-in-out;
         }
         button {
             background-color: #61dafb;
             color: #282c34;
-            &:hover {
-                transform: scale(1.1); /* For Bubbly effect */
-            }
+        }
+        button:hover {
+            transform: scale(1.1);
         }
         input:hover, input:focus, button:hover, button:focus {
-            transform: scale(1.05); /* For Bubbly effect */
-            box-shadow: 0px 6px #000; /* For 3D effect */
+            transform: scale(1.05); 
+            box-shadow: 0px 6px #000;
         }
         .sparkle {
             position: absolute;
@@ -186,6 +187,20 @@
             });
         });
 
+        // Added touch event for mobile sparkle effect
+        document.addEventListener('touchmove', function(e) {
+            const touch = e.touches[0];
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.top = touch.pageY + 'px';
+            sparkle.style.left = touch.pageX + 'px';
+            document.body.appendChild(sparkle);
+
+            sparkle.addEventListener('animationend', function() {
+                sparkle.parentElement.removeChild(sparkle);
+            });
+        });
+
         function calculateAge(birthDate) {
             let now = new Date();
             let birth = new Date(birthDate);
@@ -210,7 +225,7 @@
             if (birthDate) {
                 updateDisplays(birthDate + 'T00:00:00');
                 interval = setInterval(() => updateDisplays(birthDate + 'T00:00:00'), 1000);
-                displayQuote(); // Call the displayQuote function when a new date is submitted
+                displayQuote();
             }
         }
     </script>
