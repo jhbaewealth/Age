@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Age and Life Expectancy Calculator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #282c34;
+            color: #61dafb;
+            font-family: 'Arial', sans-serif;
+        }
+        #title {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        #ageDisplay, #lifeExpectancyDisplay, #quoteDisplay {
+            margin-top: 20px;
+            font-size: 2rem;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 1rem;
+            color: #282c34;
+            cursor: pointer;
+        }
+        .sparkle {
+            position: absolute;
+            background-color: #61dafb;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            animation: scaleUp 0.5s forwards;
+        }
+        @keyframes scaleUp {
+            to {
+                transform: scale(0);
+            }
+        }
+        #footnote {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            background-color: #282c34;
+            color: #61dafb;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">Enter Your Birth Date</div>
+    <form id="birthdayForm">
+        <input type="date" id="birthDateInput" max="2023-09-26" />
+        <button type="submit">Submit</button>
+    </form>
+    <div id="ageDisplay">Your Age: </div>
+    <div id="lifeExpectancyDisplay">Estimated Seconds Left to Live: </div>
+    <div id="quoteDisplay"></div>
+    <div id="footnote">* The average life expectancy used for calculations is 72.6 years</div>
+    <script>
+        let interval;
+        let lastQuoteIndex = -1; 
+        const averageLifeExpectancy = 72.6;
+        const quotes = [
+            "Be yourself; everyone else is already taken. — Oscar Wilde",
+            "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe. — Albert Einstein",
+            "Be the change that you wish to see in the world. — Mahatma Gandhi",
+            "If you want to know what a man's like, take a good look at how he treats his inferiors, not his equals. — J.K. Rowling",
+            "To live is the rarest thing in the world. Most people exist, that is all. — Oscar Wilde",
+        ];
+
+        document.getElementById('birthdayForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitBirthday();
+        });
+
+        function displayQuote() {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * quotes.length);
+            } while (randomIndex === lastQuoteIndex && quotes.length > 1);
+            
+            lastQuoteIndex = randomIndex;
+            document.getElementById('quoteDisplay').textContent = quotes[randomIndex];
+        }
+
+        document.addEventListener('mousemove', function(e) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.top = e.pageY + 'px';
+            sparkle.style.left = e.pageX + 'px';
+            document.body.appendChild(sparkle);
+
+            sparkle.addEventListener('animationend', function() {
+                sparkle.parentElement.removeChild(sparkle);
+            });
+        });
+
+        function calculateAge(birthDate) {
+            let now = new Date();
+            let birth = new Date(birthDate);
+            let differenceInSeconds = (now - birth) / 1000;
+            let years = differenceInSeconds / (365.25 * 24 * 3600);
+            return years;
+        }
+
+        function updateDisplays(birthDate) {
+            let age = calculateAge(birthDate);
+            document.getElementById('ageDisplay').textContent = 'Your Age: ' + age.toFixed(9) + ' years';
+
+            let ageInSeconds = (new Date() - new Date(birthDate)) / 1000;
+            let secondsLeft = (averageLifeExpectancy * 365.25 * 24 * 3600) - ageInSeconds;
+            document.getElementById('lifeExpectancyDisplay').textContent = 'Estimated Seconds Left to Live: ' + secondsLeft.toFixed(0);
+        }
+
+        function submitBirthday() {
+            clearInterval(interval);
+            let inputElement = document.getElementById('birthDateInput');
+            let birthDate = inputElement.value;
+            if (birthDate) {
+                updateDisplays(birthDate + 'T00:00:00');
+                interval = setInterval(() => updateDisplays(birthDate + 'T00:00:00'), 1000);
+                displayQuote(); // Call the displayQuote function when a new date is submitted
+            }
+        }
+    </script>
+</body>
+</html>
