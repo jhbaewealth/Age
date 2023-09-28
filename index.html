@@ -178,61 +178,58 @@
     "It is forbidden to kill; therefore all murderers are punished unless they kill in large numbers and to the sound of trumpets. — Voltaire",
 ];
 
-        document.getElementById('birthdayForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            submitBirthday();
+       document.getElementById('birthdayForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        submitBirthday();
+    });
+
+    function displayQuote() {
+        let randomIndex;
+        do {
+            randomIndex = Math.floor(Math.random() * quotes.length);
+        } while (randomIndex === lastQuoteIndex && quotes.length > 1);
+
+        lastQuoteIndex = randomIndex;
+        document.getElementById('quoteDisplay').textContent = quotes[randomIndex];
+    }
+
+    document.addEventListener('mousemove', function (e) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.top = e.pageY + 'px';
+        sparkle.style.left = e.pageX + 'px';
+        document.body.appendChild(sparkle);
+
+        sparkle.addEventListener('animationend', function () {
+            sparkle.parentElement.removeChild(sparkle);
         });
+    });
 
-        function displayQuote() {
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * quotes.length);
-            } while (randomIndex === lastQuoteIndex && quotes.length > 1);
-            
-            lastQuoteIndex = randomIndex;
-            document.getElementById('quoteDisplay').textContent = quotes[randomIndex];
+    function calculateAge(birthDate) {
+        let now = new Date();
+        let birth = new Date(birthDate);
+        let differenceInSeconds = (now - birth) / 1000;
+        let years = differenceInSeconds / (365.25 * 24 * 3600);
+        return years;
+    }
+
+    function updateDisplays(birthDate) {
+        let age = calculateAge(birthDate);
+        document.getElementById('ageDisplay').textContent = 'Your Age: ' + age.toFixed(9) + ' years';
+
+        let ageInSeconds = (new Date() - new Date(birthDate)) / 1000;
+        let secondsLeft = (averageLifeExpectancy * 365.25 * 24 * 3600) - ageInSeconds;
+        document.getElementById('lifeExpectancyDisplay').textContent = 'Estimated Seconds Left to Live: ' + secondsLeft.toFixed(0);
+    }
+
+    function submitBirthday() {
+        clearInterval(interval);
+        let inputElement = document.getElementById('birthDateInput');
+        let birthDate = inputElement.value;
+        if (birthDate) {
+            updateDisplays(birthDate + 'T00:00:00');
+            interval = setInterval(() => updateDisplays(birthDate + 'T00:00:00'), 1000);
+            displayQuote(); 
         }
-
-        document.addEventListener('mousemove', function (e) {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.style.top = e.pageY + 'px';
-            sparkle.style.left = e.pageX + 'px';
-            document.body.appendChild(sparkle);
-
-            sparkle.addEventListener('animationend', function () {
-                sparkle.parentElement.removeChild(sparkle);
-            });
-        });
-
-        function calculateAge(birthDate) {
-            let now = new Date();
-            let birth = new Date(birthDate);
-            let differenceInSeconds = (now - birth) / 1000;
-            let years = differenceInSeconds / (365.25 * 24 * 3600);
-            return years;
-        }
-
-        function updateDisplays(birthDate) {
-            let age = calculateAge(birthDate);
-            document.getElementById('ageDisplay').textContent = 'Your Age: ' + age.toFixed(9) + ' years';
-
-            let ageInSeconds = (new Date() - new Date(birthDate)) / 1000;
-            let secondsLeft = (averageLifeExpectancy * 365.25 * 24 * 3600) - ageInSeconds;
-            document.getElementById('lifeExpectancyDisplay').textContent = 'Estimated Seconds Left to Live: ' + secondsLeft.toFixed(0);
-        }
-
-        function submitBirthday() {
-            clearInterval(interval);
-            let inputElement = document.getElementById('birthDateInput');
-            let birthDate = inputElement.value;
-            if (birthDate) {
-                updateDisplays(birthDate + 'T00:00:00');
-                interval = setInterval(() => updateDisplays(birthDate + 'T00:00:00'), 1000);
-                displayQuote(); 
-            }
-        }
-    </script>
-</body>
-
-</html>
+    }
+</script>
