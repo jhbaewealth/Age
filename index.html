@@ -19,16 +19,26 @@
         #title {
             font-size: 3rem;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 0px #000, 4px 4px 0px #FFF; /* 3D effect */
         }
         #ageDisplay, #lifeExpectancyDisplay, #quoteDisplay {
             margin-top: 20px;
             font-size: 2rem;
+            text-shadow: 1px 1px 0px #000, 2px 2px 0px #FFF; /* 3D effect */
         }
         input, button {
             padding: 10px;
             font-size: 1rem;
             color: #282c34;
             cursor: pointer;
+            border-radius: 15px; /* Bubbly effect */
+            border: none;
+            box-shadow: 0px 0px 10px #000; /* Add a subtle shadow */
+            outline: none; /* Remove the default outline */
+        }
+        button {
+            background-color: #61dafb;
+            color: #282c34;
         }
         .sparkle {
             position: absolute;
